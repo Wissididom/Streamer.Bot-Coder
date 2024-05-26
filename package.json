@@ -1,0 +1,17 @@
+{
+  "name": "streamer.bot-coder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check-format": "prettier --check .",
+    "format": "prettier --write ."
+  },
+  "author": "Wissididom",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}
