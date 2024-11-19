@@ -2,7 +2,10 @@ import zlib from "node:zlib";
 import { Buffer } from "node:buffer";
 
 export function encodeCustomUUencodedText(json: string): string {
-  const prettyfiedJson = JSON.stringify(JSON.parse(json), null, 2).replace(/\n/g, "\r\n").replace(/"weight": ?(\d+),/g, '"weight": $1.0,');
+  const prettyfiedJson = JSON.stringify(JSON.parse(json), null, 2).replace(
+    /\n/g,
+    "\r\n",
+  ).replace(/"weight": ?(\d+),/g, '"weight": $1.0,');
 
   // Compress using gzip
   const compressedData = zlib.gzipSync(prettyfiedJson);
