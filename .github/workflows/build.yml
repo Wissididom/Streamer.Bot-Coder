@@ -1,0 +1,96 @@
+name: Deno Build
+permissions:
+  "contents": "write"
+
+on:
+  push:
+    branches: ["master", "main"]
+  pull_request:
+    branches: ["master", "main"]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install dependencies
+        run: |
+          deno install
+      - name: Compile
+        run: |
+          deno compile -ERWN main.ts
+      - name: Upload artifact (Windows)
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/upload-artifact@v4
+        with:
+          name: herokerrey-bot-${{ matrix.os }}
+          path: herokerrey-bot.exe
+      - name: Upload artifact (Ubuntu and Mac)
+        if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macos')
+        uses: actions/upload-artifact@v4
+        with:
+          name: herokerrey-bot-${{ matrix.os }}
+          path: herokerrey-bot
+  create-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main')
+
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout Code
+
+      # Windows
+      - uses: actions/download-artifact@v4
+        name: Download Windows
+        with:
+          name: herokerrey-bot-windows-latest
+          path: release-artifacts/
+
+      - name: Rename Windows Binary
+        run: mv release-artifacts/herokerrey-bot.exe release-artifacts/herokerrey-bot-Windows.exe
+
+      - uses: actions/download-artifact@v4
+        name: Download Linux
+        with:
+          name: herokerrey-bot-ubuntu-latest
+          path: release-artifacts/
+
+      - name: Rename Linux Binary
+        run: mv release-artifacts/herokerrey-bot release-artifacts/herokerrey-bot-Linux
+
+      - uses: actions/download-artifact@v4
+        name: Download Mac
+        with:
+          name: herokerrey-bot-macos-latest
+          path: release-artifacts/
+
+      - name: Rename Mac Binary
+        run: mv release-artifacts/herokerrey-bot release-artifacts/herokerrey-bot-Mac
+
+      - name: Create release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          replacesArtifacts: true
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: "release-artifacts/*"
+          body: ${{ github.event.head_commit.message }}
+          prerelease: true
+          name: Nightly Release
+          tag: nightly-build
+
+      - name: Update nightly-build tag
+        run: |
+          git tag -f nightly-build
+          git push -f origin nightly-build
+        shell: bash
