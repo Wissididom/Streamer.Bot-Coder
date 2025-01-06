@@ -14,7 +14,11 @@ export function decodeCustomUUencodedText(encodedString: string): string {
     return decompressedData.toString("utf8");
   } catch (e) {
     // If decompression fails, print error and return raw binary data as a string
-    console.error(`Gzip decompression error: ${e.message}`);
+    if (e instanceof Error) {
+      console.error(`Gzip decompression error: ${e.message}`);
+    } else {
+      console.error(`Gzip decompression error: ${e}`);
+    }
     return binaryData.toString("utf8");
   }
 }
