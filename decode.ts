@@ -20,6 +20,6 @@ export function decodeCustomUUencodedText(encodedString: string): string {
 }
 
 if (import.meta.main) {
-  const decodedData = decodeCustomUUencodedText("TODO");
+  const decodedData = decodeCustomUUencodedText(Deno.args[0]);
   console.log(decodedData);
 }

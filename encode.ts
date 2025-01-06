@@ -19,6 +19,6 @@ export function encodeCustomUUencodedText(json: string): string {
 }
 
 if (import.meta.main) {
-  const encodedText = encodeCustomUUencodedText("TODO");
+  const encodedText = encodeCustomUUencodedText(Deno.args[0]);
   console.log(encodedText);
 }
