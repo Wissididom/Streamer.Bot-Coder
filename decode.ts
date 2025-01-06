@@ -12,7 +12,7 @@ export function decodeCustomUUencodedText(encodedString: string): string {
   try {
     const decompressedData = zlib.gunzipSync(binaryData);
     return decompressedData.toString("utf8");
-  } catch (e: any) {
+  } catch (e) {
     // If decompression fails, print error and return raw binary data as a string
     console.error(`Gzip decompression error: ${e.message}`);
     return binaryData.toString("utf8");
