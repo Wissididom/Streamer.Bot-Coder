@@ -24,6 +24,10 @@ export function decodeCustomUUencodedText(encodedString: string): string {
 }
 
 if (import.meta.main) {
-  const decodedData = decodeCustomUUencodedText(Deno.args[0]);
+  let firstArgV = Deno.args[0];
+  if (firstArgV.startsWith("f:")) {
+    firstArgV = await Deno.readTextFile(firstArgV.substring("f:".length));
+  }
+  const decodedData = decodeCustomUUencodedText(firstArgV);
   console.log(decodedData);
 }

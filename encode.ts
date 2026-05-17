@@ -19,6 +19,10 @@ export function encodeCustomUUencodedText(json: string): string {
 }
 
 if (import.meta.main) {
-  const encodedText = encodeCustomUUencodedText(Deno.args[0]);
+  let firstArgV = Deno.args[0];
+  if (firstArgV.startsWith("f:")) {
+    firstArgV = await Deno.readTextFile(firstArgV.substring("f:".length));
+  }
+  const encodedText = encodeCustomUUencodedText(firstArgV);
   console.log(encodedText);
 }
